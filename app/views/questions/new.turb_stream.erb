@@ -1,0 +1,3 @@
+<%= turbo_stream.append :questions do %>
+  <%= render partial: "questions/question", locals: { question: Question.new } %>
+<% end %>

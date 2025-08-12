@@ -1,0 +1,9 @@
+<%= fields_for "quiz[questions_attributes][#{question.id}]", question do |ff| %>
+  <fieldset class="mb-4" id="<%= question.id %>">
+    <legend>question Info</legend>
+    <%= ff.label :title %><br>
+    <%= ff.text_field :title, class: "px-2 py-1 border w-full rounded-md" %>
+    <%= ff.hidden_field :id %>
+    <%= button_tag "Delete question", formaction: quiz_question_path(@quiz, question), formmethod: :delete, class: "mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
+  </fieldset>
+<% end %>

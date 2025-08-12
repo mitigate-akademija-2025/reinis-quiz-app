@@ -65,6 +65,7 @@ class QuizzesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def quiz_params
-      params.expect(quiz: [ :title, :description, :owner_id ])
+      # params.expect(quiz: [ :title, :description, :owner_id ])
+      params.require(:quiz).permit(:title, :description, questions_attributes: [:id, :title, :_destroy])
     end
 end

@@ -21,7 +21,15 @@ end
 
 p "Created #{Quiz.count} tasks"
 
+Question.destroy_all
 
+[
+  { quiz_id: Quiz.find_by(title: "Ruby Basics").id, title: "What is Ruby?", description: "A question about the Ruby programming language." },
+  { quiz_id: Quiz.find_by(title: "Rails Fundamentals").id, title: "What is Rails?", description: "A question about the Rails framework." },
+  { quiz_id: Quiz.find_by(title: "JavaScript Essentials").id, title: "What is JavaScript?", description: "A question about the JavaScript programming language." }
+].each do |question_attributes|
+  Question.find_or_create_by!(question_attributes)
+end
 
-
+p "Created #{Question.count} questions"
 

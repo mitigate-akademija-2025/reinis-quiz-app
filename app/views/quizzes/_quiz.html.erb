@@ -7,4 +7,17 @@
     <strong class="block font-medium mb-1">Description:</strong>
     <%= quiz.description %>
   </div>
+
+  <div>
+    <% quiz.questions.each do |question| %>
+      <div class="border-t pt-3">
+        <strong class="block font-medium mb-1">Question Title:</strong>
+        <%= question.title %>
+        <div>
+          <strong class="block font-medium mb-1">Question Description:</strong>
+          <%= question.description %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
