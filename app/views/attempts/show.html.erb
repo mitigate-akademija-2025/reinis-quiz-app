@@ -1,0 +1,70 @@
+<div class="md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl mb-6">Quiz Results: <%= @quiz.title %></h1>
+
+  <div class="bg-white shadow rounded-lg p-6 mb-6">
+    <div class="flex items-center mb-4">
+      <div class="mr-4">
+        <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-semibold">Quiz Completed By</h2>
+        <p class="text-gray-600"><%= @attempt.user.user_name %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow rounded-lg p-6 mb-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold">Score Summary</h2>
+      <span class="text-2xl font-bold text-blue-600">
+        <%= @attempt.submissions.count { |s| s.answer.is_correct? } %> / <%= @attempt.submissions.count %>
+      </span>
+    </div>
+    <div class="text-sm text-gray-600">
+      Attempted on: <%= @attempt.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <% @attempt.submissions.includes(:question, :answer).each do |submission| %>
+      <div class="border rounded-lg p-6 <%= submission.answer.is_correct? ? 'bg-green-50' : 'bg-red-50' %>">
+        <h3 class="font-semibold text-lg mb-3"><%= submission.question.title %></h3>
+        
+        <div class="space-y-2">
+          <% submission.question.answers.each do |answer| %>
+            <div class="flex items-center">
+              <div class="w-4 h-4 mr-3 flex-shrink-0">
+                <% if answer == submission.answer %>
+                  <% if answer.is_correct? %>
+                    <svg class="text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                  <% else %>
+                    <svg class="text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  <% end %>
+                <% end %>
+              </div>
+              <span class="<%= answer.is_correct? ? 'font-semibold' : '' %>">
+                <%= answer.body %>
+                <% if answer.is_correct? %>
+                  <span class="text-sm text-green-600 ml-2">(Correct Answer)</span>
+                <% end %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-8 flex space-x-4">
+    <%= link_to "Back to Quiz", quiz_path(@quiz), 
+        class: "px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700" %>
+    <%= link_to "Try Quiz", new_quiz_attempt_path(@quiz), 
+          class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md" %>
+  </div>
+</div>

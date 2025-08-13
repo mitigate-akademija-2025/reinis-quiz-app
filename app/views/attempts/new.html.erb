@@ -1,0 +1,30 @@
+<div class="md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl mb-6">Take Quiz: <%= @quiz.title %></h1>
+
+  <%= form_with(model: [@quiz, @attempt], class: "contents") do |form| %>
+    <% @questions.each do |question| %>
+      <div class="my-5 p-4 border rounded">
+        <h2 class="font-bold text-xl mb-4"><%= question.title %></h2>
+        
+        <div class="space-y-2">
+          <% question.answers.each do |answer| %>
+            <div class="flex items-center">
+              <%= radio_button_tag "attempt[submissions_attributes][#{question.id}][answer_id]", 
+                                 answer.id, 
+                                 false, 
+                                 required: true,
+                                 class: "mr-2" %>
+              <%= label_tag "attempt[submissions_attributes][#{question.id}][answer_id]_#{answer.id}", 
+                          answer.body %>
+              <%= hidden_field_tag "attempt[submissions_attributes][#{question.id}][question_id]", 
+                                 question.id %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form.submit "Submit Answers", 
+                   class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <% end %>
+</div>

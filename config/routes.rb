@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   # devise_for :users
 
   resources :quizzes do
+    resources :attempts, only: [:new, :create, :show]
     resources :questions, only: [:new, :destroy] do
       resources :answers, only: [:new, :destroy] do 
         collection do 
