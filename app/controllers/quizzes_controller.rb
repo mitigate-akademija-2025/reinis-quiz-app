@@ -3,6 +3,8 @@ class QuizzesController < ApplicationController
 
   before_action :authenticate_user!
 
+  before_action :check_owner, only: [:edit, :update, :destroy]
+
   # GET /quizzes or /quizzes.json
   def index
     @quizzes = Quiz.all
@@ -16,6 +18,7 @@ class QuizzesController < ApplicationController
   def new
     @quiz = Quiz.new
     @quiz.title = 'New Quiz'
+    @quiz.owner_id = current_user.id
     @quiz.save
   end
 
@@ -86,4 +89,8 @@ def quiz_params
     ]
   )
 end
+
+  def check_owner
+    redirect_to quizzes_path, alert: "You don't have permission to edit this quiz." unless @quiz.owner_id == current_user.id
+  end
 end
