@@ -5,6 +5,11 @@
     <%= ff.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:title].none?, "border-red-400 focus:outline-red-600": question.errors[:title].any?}] %>
     <%= ff.hidden_field :id %>
 
+    <div id="answers">
+    <%= render question.answers %>
+    </div>
+    <%= link_to "Add an Answer", new_quiz_question_answer_path(quiz_id: question.quiz_id, question_id: question.id), data: { turbo_stream: true }, class: "block p-2 rounded-md bg-blue-300 hover:bg-blue-400" %>
+
     <%= button_tag "Delete question", formaction: quiz_question_path(question.quiz_id, question.id), formmethod: :delete, class: "mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
   </fieldset>
 <% end %>

@@ -1,0 +1,27 @@
+<%= fields_for "quiz[questions_attributes][#{answer.question_id}][answers_attributes][#{answer.id}]", answer do |ff| %>
+    <% uid = answer.persisted? ? dom_id(answer) : "answer_#{SecureRandom.uuid}" %>
+    <fieldset class="mb-4" id="<%= uid %>">
+        <legend>Answer Info</legend>
+        <%= ff.label :body %><br>
+        <%= ff.text_field :body, class: [
+            "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full",
+            {
+                "border-gray-400 focus:outline-blue-600": answer.errors[:body].none?,
+                "border-red-400 focus:outline-red-600": answer.errors[:body].any?
+            }
+        ] %>
+        <%= ff.hidden_field :id %>
+
+        <% if answer.persisted? %>
+            <%= link_to "Delete answer",
+                        quiz_question_answer_path(answer.question.quiz_id, answer.question_id, answer.id),
+                        data: { turbo_method: :delete, turbo_stream: true },
+                        class: "mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
+        <% else %>
+            <%= link_to "Delete answer",
+                        remove_local_quiz_question_answers_path(answer.question.quiz_id, answer.question_id, dom_id: uid),
+                        data: { turbo_method: :delete, turbo_stream: true },
+                        class: "mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
+        <% end %>
+    </fieldset>
+<% end %>

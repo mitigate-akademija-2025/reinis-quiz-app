@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
 
   resources :quizzes do
-    resources :questions, only: [:new, :destroy]
+    resources :questions, only: [:new, :destroy] do
+      resources :answers, only: [:new, :destroy] do 
+        collection do 
+          delete :remove_local
+        end
+    end
+  end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

@@ -33,3 +33,16 @@ end
 
 p "Created #{Question.count} questions"
 
+Answer.destroy_all
+
+[
+  { question_id: Question.find_by(title: "What is Ruby?").id, body: "Ruby is a dynamic, open-source programming language." },
+  { question_id: Question.find_by(title: "What is Rails?").id, body: "Rails is a web application framework written in Ruby." },
+  { question_id: Question.find_by(title: "What is JavaScript?").id, body: "JavaScript is a programming language primarily used for web development." }
+].each do |answer_attributes|
+  Answer.find_or_create_by!(answer_attributes)
+end
+
+p "Created #{Answer.count} answers"
+
+

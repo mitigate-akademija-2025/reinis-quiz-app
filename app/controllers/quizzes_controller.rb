@@ -63,9 +63,22 @@ class QuizzesController < ApplicationController
       @quiz = Quiz.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
-    def quiz_params
-      # params.expect(quiz: [ :title, :description, :owner_id ])
-      params.require(:quiz).permit(:title, :description, questions_attributes: [:id, :title, :_destroy])
-    end
+def quiz_params
+  params.require(:quiz).permit(
+    :title,
+    :description,
+    questions_attributes: [
+      :id,
+      :title,
+      :_destroy,
+      answers_attributes: [
+        :id,
+        :body,
+        :is_correct,
+        :_destroy,
+        :question_id  # Add this if needed
+      ]
+    ]
+  )
+end
 end
