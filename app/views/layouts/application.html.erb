@@ -23,8 +23,14 @@
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+
+    <%= button_to "logout", destroy_user_session_path, method: :delete, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" if user_signed_in? %>
+
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+    <main class="container mx-auto px-5 flex flex-col items-center">
       <%= yield %>
     </main>
+
   </body>
 </html>

@@ -9,6 +9,19 @@
 #   end
 
 
+User.destroy_all
+
+
+[
+  { email: "user1@example.com", password: "password123", user_name: "RubyLearner" },
+  { email: "user2@example.com", password: "password456", user_name: "RailsMaster" },
+  { email: "user3@example.com", password: "password789", user_name: "JSNinja" }
+].each do |user_attributes|
+  User.create!(user_attributes)
+end
+
+p "Created #{User.count} users"
+
 Quiz.destroy_all
 
 [
@@ -44,5 +57,10 @@ Answer.destroy_all
 end
 
 p "Created #{Answer.count} answers"
+
+
+
+
+
 
 
