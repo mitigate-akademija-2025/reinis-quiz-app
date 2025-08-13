@@ -15,6 +15,8 @@ class QuizzesController < ApplicationController
   # GET /quizzes/new
   def new
     @quiz = Quiz.new
+    @quiz.title = 'New Quiz'
+    @quiz.save
   end
 
   # GET /quizzes/1/edit
@@ -62,7 +64,8 @@ class QuizzesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_quiz
-      @quiz = Quiz.find(params.expect(:id))
+      # @quiz = Quiz.find(params.expect(:id))
+      @quiz = Quiz.find(params[:id])
     end
 
 def quiz_params

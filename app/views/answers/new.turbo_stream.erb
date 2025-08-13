@@ -1,3 +1,4 @@
 <%= turbo_stream.append :answers do %>
-  <%= render partial: "answers/answer", locals: { answer: Answer.new } %>
+  <%= render partial: "answers/answer", locals: { answer: @answer } %>
 <% end %>
+

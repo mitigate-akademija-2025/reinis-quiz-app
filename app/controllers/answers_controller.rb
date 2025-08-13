@@ -1,14 +1,21 @@
 class AnswersController < ApplicationController
-    include ActionView::RecordIdentifier
 
   def new
     quiz = Quiz.find(params[:quiz_id])
     question = Question.find(params[:question_id])
-    answer = question.answers.build # Not saved to DB
+    @answer = Answer.new(question: question)
 
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.append(:answers, partial: "answers/answer", locals: { answer: answer, question: question, quiz: quiz }) }
-    end
+    @answer.body = 'Answer...'
+    @answer.is_correct = false
+
+    @answer.save
+    
+    # if answer.save
+    #     respond_to do |format|
+    #       # format.turbo_stream { render turbo_stream: turbo_stream.append(:answers, partial: "answers/answer", locals: { quiz: quiz, question: question, answer: answer }) }
+    #       format.turbo_stream 
+    #     end
+    # end
   end
 
     def destroy
@@ -18,14 +25,7 @@ class AnswersController < ApplicationController
             answer = Answer.new(id: params[:id])
         ensure 
             respond_to do |format|
-                format.turbo_stream { render turbo_stream: turbo_stream.remove(dom_id(answer)) }
-                format.html { redirect_back fallback_location: root_path }
+                format.turbo_stream { render turbo_stream: turbo_stream.remove(answer.id) }
         end
     end
-
-    def remove_local
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(params[:dom_id]) }
-    end
-  end
 end
