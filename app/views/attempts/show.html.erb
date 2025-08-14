@@ -62,9 +62,29 @@
   </div>
 
   <div class="mt-8 flex space-x-4">
+    <button onclick="copyToClipboard(window.location.href)" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700">
+      Copy Quiz URL
+    </button>
+
+    <script>
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const notice = document.createElement('div');
+        notice.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
+        notice.textContent = 'URL copied to clipboard!';
+        document.body.appendChild(notice);
+        setTimeout(() => notice.remove(), 3000);
+      }).catch(err => {
+        console.error('Failed to copy URL:', err);
+      });
+    }
+    </script>
+
     <%= link_to "Back to Quiz", quiz_path(@quiz), 
         class: "px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700" %>
+      <% unless @quiz.attempted_by?(current_user) %>
     <%= link_to "Try Quiz", new_quiz_attempt_path(@quiz), 
           class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md" %>
+  <% end %>
   </div>
 </div>

@@ -1,6 +1,7 @@
 class AttemptsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_quiz
+  before_action :check_previous_attempt, only: [:new, :create]
   
   def new
     @attempt = @quiz.attempts.build(user: current_user)
@@ -37,9 +38,10 @@ class AttemptsController < ApplicationController
     @quiz = Quiz.find(params[:quiz_id])
   end
 
-  def authorize_attempt!
-    unless @attempt.user == current_user
-      redirect_to quiz_path(@quiz), alert: "You don't have permission to view this attempt."
+  def check_previous_attempt
+    if @quiz.attempted_by?(current_user)
+      redirect_to quiz_attempt_path(@quiz, @quiz.last_attempt_for(current_user)), 
+                  alert: "You have already completed this quiz."
     end
   end
 end
