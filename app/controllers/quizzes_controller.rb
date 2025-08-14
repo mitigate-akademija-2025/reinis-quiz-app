@@ -56,7 +56,13 @@ class QuizzesController < ApplicationController
 
   # DELETE /quizzes/1 or /quizzes/1.json
   def destroy
-    @quiz.destroy!
+    ActiveRecord::Base.transaction do
+      @quiz.attempts.destroy_all
+      @quiz.submissions.destroy_all
+      @quiz.questions.destroy_all
+      @quiz.answers.destroy_all
+      @quiz.destroy!
+    end
 
     respond_to do |format|
       format.html { redirect_to quizzes_path, notice: "Quiz was successfully destroyed.", status: :see_other }
