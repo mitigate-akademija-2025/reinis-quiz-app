@@ -30,67 +30,109 @@ quizzes = [
   { 
     title: "Ruby Basics", 
     description: "Test your knowledge of Ruby fundamentals", 
-    owner_id: users.first.id 
+    owner_id: users.first.id,
+    questions: [
+      {
+        title: "What is a Symbol in Ruby?",
+        answers: [
+          { body: "An immutable string-like object commonly used as a hash key", is_correct: true },
+          { body: "A variable that can store multiple values", is_correct: false },
+          { body: "A type of loop in Ruby", is_correct: false }
+        ]
+      },
+      {
+        title: "What does attr_accessor do?",
+        answers: [
+          { body: "Creates getter and setter methods for instance variables", is_correct: true },
+          { body: "Creates only getter methods", is_correct: false },
+          { body: "Creates only setter methods", is_correct: false }
+        ]
+      }
+    ]
   },
   { 
     title: "Rails Fundamentals", 
     description: "Learn about Ruby on Rails", 
-    owner_id: users.second.id 
+    owner_id: users.second.id,
+    questions: [
+      {
+        title: "What is MVC in Rails?",
+        answers: [
+          { body: "Model-View-Controller architectural pattern", is_correct: true },
+          { body: "Multiple Virtual Computers", is_correct: false },
+          { body: "Main Virtual Config", is_correct: false }
+        ]
+      },
+      {
+        title: "What is Active Record?",
+        answers: [
+          { body: "Rails ORM for database interaction", is_correct: true },
+          { body: "A type of database", is_correct: false },
+          { body: "A recording studio", is_correct: false }
+        ]
+      }
+    ]
+  },
+  { 
+    title: "JavaScript Essentials", 
+    description: "Master the basics of JavaScript", 
+    owner_id: users.third.id,
+    questions: [
+      {
+        title: "What is closure in JavaScript?",
+        answers: [
+          { body: "A function that has access to variables in its outer scope", is_correct: true },
+          { body: "A way to close browser windows", is_correct: false },
+          { body: "A type of loop", is_correct: false }
+        ]
+      },
+      {
+        title: "What is the difference between let and var?",
+        answers: [
+          { body: "let has block scope, var has function scope", is_correct: true },
+          { body: "They are exactly the same", is_correct: false },
+          { body: "var is newer than let", is_correct: false }
+        ]
+      }
+    ]
   }
 ].map { |attributes| Quiz.find_or_create_by!(title: attributes[:title]) do |quiz|
   quiz.description = attributes[:description]
   quiz.owner_id = attributes[:owner_id]
+  
+  attributes[:questions].each do |q_attrs|
+    question = quiz.questions.build(title: q_attrs[:title])
+    q_attrs[:answers].each do |a_attrs|
+      question.answers.build(a_attrs)
+    end
+  end
 end }
 
 puts "Created #{Quiz.count} quizzes"
-
-# Create Questions and Answers for each quiz
-quizzes.each do |quiz|
-  2.times do |i|
-    question = quiz.questions.find_or_create_by!(title: "Question #{i + 1} for #{quiz.title}") do |q|
-      q.description = "This is question #{i + 1}"
-    end
-
-    question.answers.find_or_create_by!(body: "Correct answer for question #{i + 1}") do |answer|
-      answer.is_correct = true
-    end
-
-    2.times do |j|
-      question.answers.find_or_create_by!(
-        body: "Incorrect answer #{j + 1} for question #{i + 1}"
-      ) do |answer|
-        answer.is_correct = false
-      end
-    end
-  end
-end
-
 puts "Created #{Question.count} questions with #{Answer.count} answers"
 
-# Create Attempts and Submissions for each user and quiz
-users.each do |user|
-  quizzes.each do |quiz|
-    next if quiz.attempted_by?(user)
+# Create attempts for only some users and quizzes
+attempts_data = [
+  { user: users.first, quiz: quizzes.first },  # First user attempts Ruby quiz
+  { user: users.second, quiz: quizzes.second } # Second user attempts Rails quiz
+  # Third user and JavaScript quiz remain unattempted
+]
 
-    attempt = quiz.attempts.build(user: user)
-    
-    quiz.questions.each do |question|
-      answer = question.answers.sample
-      attempt.submissions.build(
-        question: question,
-        answer: answer
-      )
-    end
+attempts_data.each do |data|
+  next if data[:quiz].attempted_by?(data[:user])
 
-    attempt.save!
+  attempt = data[:quiz].attempts.build(user: data[:user])
+  
+  data[:quiz].questions.each do |question|
+    answer = question.answers.sample # Randomly select an answer
+    attempt.submissions.build(
+      question: question,
+      answer: answer
+    )
   end
+
+  attempt.save!
 end
 
 puts "Created #{Attempt.count} attempts with #{Submission.count} submissions"
 puts "Seeding completed successfully!"
-
-
-
-
-
-
