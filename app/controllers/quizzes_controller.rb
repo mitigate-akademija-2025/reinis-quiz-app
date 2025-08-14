@@ -1,5 +1,5 @@
 class QuizzesController < ApplicationController
-  before_action :set_quiz, only: %i[ show edit update destroy ]
+  before_action :set_quiz, only: %i[ show edit update destroy reset_attempts ]
 
   before_action :authenticate_user!
 
@@ -79,7 +79,30 @@ class QuizzesController < ApplicationController
     end
   end
 
-  private
+def reset_attempts
+  ActiveRecord::Base.transaction do
+    # First get all attempts for this quiz
+    attempts = @quiz.attempts.includes(:submissions)
+    
+    # Delete all attempts (this will also delete associated submissions due to dependent: :destroy)
+    attempts.destroy_all
+  end
+
+  respond_to do |format|
+    format.html { redirect_to @quiz, notice: "Quiz attempts were successfully reset." }
+    format.json { head :no_content }
+    format.turbo_stream { redirect_to @quiz, notice: "Quiz attempts were successfully reset." }
+  end
+rescue => e
+  respond_to do |format|
+    format.html { redirect_to @quiz, alert: "Failed to reset quiz attempts." }
+    format.json { render json: { error: e.message }, status: :unprocessable_entity }
+    format.turbo_stream { redirect_to @quiz, alert: "Failed to reset quiz attempts." }
+  end
+end
+
+
+private
     # Use callbacks to share common setup or constraints between actions.
     def set_quiz
       # @quiz = Quiz.find(params.expect(:id))

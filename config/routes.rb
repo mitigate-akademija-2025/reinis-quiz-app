@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   # devise_for :users
 
   resources :quizzes do
+    member do
+      delete :reset_attempts
+    end
     resources :attempts, only: [:new, :create, :show]
     resources :questions, only: [:new, :destroy] do
       resources :answers, only: [:new, :destroy] do 
