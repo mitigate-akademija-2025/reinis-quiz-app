@@ -31,5 +31,28 @@
                   class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium" %>
     <% end %>
   <% end %>
+  <div class="mt-8">
+    <% if @quiz.attempts.any? %>
+      <table class="min-w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2 text-left">User</th>
+            <th class="px-4 py-2 text-left">Score</th>
+            <th class="px-4 py-2 text-left">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @quiz.attempts.includes(:user, :submissions).limit(10).sort_by { |attempt| -attempt.score }.each do |attempt| %>
+            <tr class="border-t">
+              <td class="px-4 py-2"><%= attempt.user.user_name %></td>
+              <td class="px-4 py-2"><%= attempt.submissions.count { |s| s.answer&.is_correct? } %> / <%= attempt.submissions.count %></td>
+              <td class="px-4 py-2"><%= attempt.created_at.strftime("%B %d, %Y %H:%M") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
   </div>
 </div>
