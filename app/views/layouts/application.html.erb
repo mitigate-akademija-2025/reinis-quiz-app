@@ -37,8 +37,8 @@
           <%= link_to "Quiz App", root_path %>
         </div>
         <div class="flex gap-4 items-center">
-          <%= button_to "logout", destroy_user_session_path, method: :delete, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" if user_signed_in? %>
-          <%= link_to "Edit account", edit_user_registration_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" if user_signed_in? %>
+          <%= button_to "Log Out", destroy_user_session_path, method: :delete, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" if user_signed_in? %>
+          <%= link_to "Edit User", edit_user_registration_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" if user_signed_in? %>
         </div>
       </nav>
       <%= yield %>
