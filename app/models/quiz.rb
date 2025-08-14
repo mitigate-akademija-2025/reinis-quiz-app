@@ -17,4 +17,8 @@ class Quiz < ApplicationRecord
   def last_attempt_for(user)
     attempts.where(user: user).last
   end
+
+    scope :search, ->(query) {
+    where("title LIKE ? OR description LIKE ?", "%#{query}%", "%#{query}%") if query.present?
+  }
 end

@@ -7,7 +7,10 @@
 
   <h1 class="font-bold text-4xl">Showing quiz</h1>
 
-  <%= render @quiz %>
+        <div class="flex flex-col">
+        <h2 class="font-bold text-xl"><%= @quiz.title %></h2>
+        <p class="text-gray-600"><%= @quiz.description %></p>
+      </div>
 
   <% if @quiz.owner_id == current_user&.id %>
     <%= link_to "Edit this quiz", edit_quiz_path(@quiz), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
