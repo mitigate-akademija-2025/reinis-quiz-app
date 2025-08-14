@@ -17,7 +17,10 @@ puts "Cleaning up existing data..."
 users = [
   { email: "user1@example.com", password: "password123", user_name: "RubyLearner" },
   { email: "user2@example.com", password: "password456", user_name: "RailsMaster" },
-  { email: "user3@example.com", password: "password789", user_name: "JSNinja" }
+  { email: "user3@example.com", password: "password789", user_name: "JSNinja" },
+  { email: "user4@example.com", password: "password101", user_name: "WebDev" },
+  { email: "user5@example.com", password: "password102", user_name: "CodeMaster" },
+  { email: "user6@example.com", password: "password103", user_name: "TestNinja" }
 ].map { |attributes| User.find_or_create_by!(email: attributes[:email]) do |user|
   user.password = attributes[:password]
   user.user_name = attributes[:user_name]
@@ -25,7 +28,7 @@ end }
 
 puts "Created #{User.count} users"
 
-# Create Quizzes
+# Create Quizzes with more questions
 quizzes = [
   { 
     title: "Ruby Basics", 
@@ -38,6 +41,15 @@ quizzes = [
           { body: "An immutable string-like object commonly used as a hash key", is_correct: true },
           { body: "A variable that can store multiple values", is_correct: false },
           { body: "A type of loop in Ruby", is_correct: false }
+        ]
+      },
+      {
+        title: "Which of these are valid Ruby data types? (Select all that apply)",
+        answers: [
+          { body: "String", is_correct: true },
+          { body: "Integer", is_correct: true },
+          { body: "JavaClass", is_correct: false },
+          { body: "Symbol", is_correct: true }
         ]
       },
       {
@@ -64,6 +76,15 @@ quizzes = [
         ]
       },
       {
+        title: "Which of these are valid Rails commands? (Select all that apply)",
+        answers: [
+          { body: "rails new", is_correct: true },
+          { body: "rails server", is_correct: true },
+          { body: "rails compile", is_correct: false },
+          { body: "rails generate", is_correct: true }
+        ]
+      },
+      {
         title: "What is Active Record?",
         answers: [
           { body: "Rails ORM for database interaction", is_correct: true },
@@ -84,6 +105,15 @@ quizzes = [
           { body: "A function that has access to variables in its outer scope", is_correct: true },
           { body: "A way to close browser windows", is_correct: false },
           { body: "A type of loop", is_correct: false }
+        ]
+      },
+      {
+        title: "Which of these are truthy values in JavaScript? (Select all that apply)",
+        answers: [
+          { body: "[]", is_correct: true },
+          { body: "{}", is_correct: true },
+          { body: "0", is_correct: false },
+          { body: "'false'", is_correct: true }
         ]
       },
       {
@@ -111,11 +141,18 @@ end }
 puts "Created #{Quiz.count} quizzes"
 puts "Created #{Question.count} questions with #{Answer.count} answers"
 
-# Create attempts for only some users and quizzes
+# Create more attempts for various users
 attempts_data = [
-  { user: users.first, quiz: quizzes.first },  # First user attempts Ruby quiz
-  { user: users.second, quiz: quizzes.second } # Second user attempts Rails quiz
-  # Third user and JavaScript quiz remain unattempted
+  { user: users[0], quiz: quizzes[0] },  # RubyLearner attempts Ruby quiz
+  { user: users[0], quiz: quizzes[1] },  # RubyLearner attempts Rails quiz
+  { user: users[1], quiz: quizzes[1] },  # RailsMaster attempts Rails quiz
+  { user: users[1], quiz: quizzes[2] },  # RailsMaster attempts JS quiz
+  { user: users[2], quiz: quizzes[2] },  # JSNinja attempts JS quiz
+  { user: users[3], quiz: quizzes[0] },  # WebDev attempts Ruby quiz
+  { user: users[3], quiz: quizzes[1] },  # WebDev attempts Rails quiz
+  { user: users[3], quiz: quizzes[2] },  # WebDev attempts JS quiz
+  { user: users[4], quiz: quizzes[1] }   # CodeMaster attempts Rails quiz
+  # TestNinja has no attempts
 ]
 
 attempts_data.each do |data|
@@ -124,11 +161,23 @@ attempts_data.each do |data|
   attempt = data[:quiz].attempts.build(user: data[:user])
   
   data[:quiz].questions.each do |question|
-    answer = question.answers.sample # Randomly select an answer
-    attempt.submissions.build(
-      question: question,
-      answer: answer
-    )
+    # For questions with multiple correct answers, randomly select 1-3 answers
+    if question.answers.count { |a| a.is_correct? } > 1
+      answers = question.answers.sample(rand(1..3))
+      answers.each do |answer|
+        attempt.submissions.build(
+          question: question,
+          answer: answer
+        )
+      end
+    else
+      # For single-answer questions, select one random answer
+      answer = question.answers.sample
+      attempt.submissions.build(
+        question: question,
+        answer: answer
+      )
+    end
   end
 
   attempt.save!
