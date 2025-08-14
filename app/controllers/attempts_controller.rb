@@ -2,6 +2,7 @@ class AttemptsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_quiz
   before_action :check_previous_attempt, only: [:new, :create]
+  before_action :check_quiz_has_questions, only: [:new, :create]
   
   def new
     @attempt = @quiz.attempts.build(user: current_user)
@@ -42,6 +43,13 @@ class AttemptsController < ApplicationController
     if @quiz.attempted_by?(current_user)
       redirect_to quiz_attempt_path(@quiz, @quiz.last_attempt_for(current_user)), 
                   alert: "You have already completed this quiz."
+    end
+  end
+
+  def check_quiz_has_questions
+    unless @quiz.questions.exists?
+      redirect_to quiz_path(@quiz), 
+                  alert: "This quiz cannot be attempted as it has no questions."
     end
   end
 end
