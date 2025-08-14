@@ -1,5 +1,5 @@
 <div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl mb-6">Quiz Results: <%= @quiz.title %></h1>
+  <h1 class="font-bold text-4xl mb-6"><%= @quiz.title %> - Results</h1>
 
   <div class="bg-white shadow rounded-lg p-6 mb-6">
     <div class="flex items-center mb-4">
@@ -9,7 +9,7 @@
         </svg>
       </div>
       <div>
-        <h2 class="text-xl font-semibold">Quiz Completed By</h2>
+        <h2 class="text-xl font-semibold">Quiz completed by</h2>
         <p class="text-gray-600"><%= @attempt.user.user_name %></p>
       </div>
     </div>
@@ -17,13 +17,10 @@
 
   <div class="bg-white shadow rounded-lg p-6 mb-6">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold">Score Summary</h2>
+      <h2 class="text-xl font-semibold">Quiz Results</h2>
       <span class="text-2xl font-bold text-blue-600">
         <%= @attempt.submissions.count { |s| s.answer.is_correct? } %> / <%= @attempt.submissions.count %>
       </span>
-    </div>
-    <div class="text-sm text-gray-600">
-      Attempted on: <%= @attempt.created_at.strftime("%B %d, %Y at %I:%M %p") %>
     </div>
   </div>
 

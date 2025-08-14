@@ -2,20 +2,16 @@ class AnswersController < ApplicationController
 
   def new
     quiz = Quiz.find(params[:quiz_id])
-    question = Question.find(params[:question_id])
-    @answer = Answer.new(question: question)
-
-    @answer.body = 'Answer...'
+    question = Question.find_by(id: params[:question_id]) || 
+               quiz.questions.build(id: params[:question_id])
+    @answer = question.answers.build
+    @answer.body = 'New Answer'
     @answer.is_correct = false
-
     @answer.save
-    
-    # if answer.save
-    #     respond_to do |format|
-    #       # format.turbo_stream { render turbo_stream: turbo_stream.append(:answers, partial: "answers/answer", locals: { quiz: quiz, question: question, answer: answer }) }
-    #       format.turbo_stream 
-    #     end
-    # end
+
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
     def destroy

@@ -1,19 +1,25 @@
 <%= fields_for "quiz[questions_attributes][#{answer.question_id}][answers_attributes][#{answer.id}]", answer do |ff| %>
-<fieldset class="mb-4" id="<%= answer.id %>">     
-        <legend>Answer Info</legend>
-        <%= ff.label :body %><br>
-        <%= ff.text_field :body, class: [
-            "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full",
-            {       
+<fieldset class="mb-1 ml-4" id="<%= answer.id %>">     
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 mr-2">
+            <%= ff.check_box :is_correct %>
+            <label>Correct</label>
+        </div>
+        <div class="flex-grow">
+            <%= ff.text_field :body, class: [
+                "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full",
+                {       
                 "border-gray-400 focus:outline-blue-600": answer.errors[:body].none?,
                 "border-red-400 focus:outline-red-600": answer.errors[:body].any?
-            }
-        ] %>
+                }
+            ] %>
+        </div>
+        <%= button_tag "Delete answer", 
+        formaction: quiz_question_answer_path(answer.question.quiz_id, answer.question_id, answer.id), 
+        formmethod: :delete, 
+        class: "mt-2 p-2 rounded-md bg-red-300 hover:bg-red-400" %>
+    </div>
 
-        <h3>Answer correct: </h3>
-        <%= ff.check_box :is_correct %>
-        <%= ff.hidden_field :id %>
-
-        <%= button_tag "Delete answer", formaction: quiz_question_answer_path(answer.question.quiz_id, answer.question_id, answer.id), formmethod: :delete, class: "mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
-    </fieldset>
+    <%= ff.hidden_field :id %>
+</fieldset>
 <% end %>

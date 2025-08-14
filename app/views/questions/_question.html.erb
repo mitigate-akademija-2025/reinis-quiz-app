@@ -1,15 +1,21 @@
 <%= fields_for "quiz[questions_attributes][#{question.id}]", question do |ff| %>
-  <fieldset class="mb-4" id="<%= question.id %>">
-    <legend>Question Info</legend>
-    <%= ff.label :title %><br>
-    <%= ff.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:title].none?, "border-red-400 focus:outline-red-600": question.errors[:title].any?}] %>
+  <% uid = question.persisted? ? dom_id(question) : "question_#{SecureRandom.uuid}" %>
+  <fieldset class="mb-4" id="<%= uid %>">
+    <div class="flex items-center gap-2">
+      <div class="flex-grow">
+        <%= ff.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:title].none?, "border-red-400 focus:outline-red-600": question.errors[:title].any?}] %>
+      </div>
+      <%= button_tag "Delete question", formaction: quiz_question_path(question.quiz_id, question.id), formmethod: :delete, class: "mt-1 px-3 py-2 rounded-md bg-red-300 hover:bg-red-400" %>
+    </div>
     <%= ff.hidden_field :id %>
 
-    <div id="answers">
-    <%= render question.answers %>
+    <div id="answers_<%= question.id || uid %>">
+      <%= render question.answers %>
     </div>
-    <%= link_to "Add an Answer", new_quiz_question_answer_path(quiz_id: question.quiz_id, question_id: question.id), data: { turbo_stream: true }, class: "block p-2 rounded-md bg-blue-300 hover:bg-blue-400" %>
-
-    <%= button_tag "Delete question", formaction: quiz_question_path(question.quiz_id, question.id), formmethod: :delete, class: "mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
+    
+    <%= link_to "Add answer", 
+                new_quiz_question_answer_path(quiz_id: question.quiz_id, question_id: question.id || uid), 
+                data: { turbo_stream: true }, 
+                class: "mt-3 block p-2 rounded-md bg-blue-300 hover:bg-blue-400 text-center" %>
   </fieldset>
 <% end %>
