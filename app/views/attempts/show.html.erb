@@ -59,7 +59,7 @@
   </div>
 
   <div class="mt-8 flex space-x-4">
-    <button onclick="copyToClipboard(window.location.href)" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700">
+    <button onclick="copyToClipboard(window.location.href)" class="w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium">
       Copy Quiz URL
     </button>
 
@@ -78,7 +78,7 @@
     </script>
 
     <%= link_to "Back to Quiz", quiz_path(@quiz), 
-        class: "px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700" %>
+        class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
       <% unless @quiz.attempted_by?(current_user) %>
     <%= link_to "Try Quiz", new_quiz_attempt_path(@quiz), 
           class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md" %>

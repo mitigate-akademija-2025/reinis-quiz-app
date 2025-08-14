@@ -22,7 +22,7 @@
 
     <% if current_user %>
     <% if @quiz.attempted_by?(current_user) %>
-      <%= link_to "View Last Attempt", 
+      <%= link_to "View Attempt", 
                   quiz_attempt_path(@quiz, @quiz.last_attempt_for(current_user)), 
                   class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-green-600 hover:bg-green-500 text-white inline-block font-medium" %>
     <% else %>
