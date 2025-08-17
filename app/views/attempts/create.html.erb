@@ -12,12 +12,12 @@
           <div class="space-y-2">
             <% question.answers.each do |answer| %>
               <div class="flex items-center">
-                <%= radio_button_tag "attempt[submissions_attributes][#{question.id}][answer_id]", 
+                <%= check_box_tag "attempt[submissions_attributes][#{question.id}][answer_id][]",
                                    answer.id, 
                                    false, 
                                    class: "mr-2" %>
-                <%= label_tag "attempt_submissions_attributes_#{question.id}_answer_id_#{answer.id}", 
-                            answer.body %>
+              <%= label_tag "attempt[submissions_attributes][#{question.id}][answer_id][]", 
+                          answer.body %>
               </div>
             <% end %>
           </div>
