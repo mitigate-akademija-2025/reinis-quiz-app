@@ -1,11 +1,10 @@
 class AnswersController < ApplicationController
-
   def new
     quiz = Quiz.find(params[:quiz_id])
-    question = Question.find_by(id: params[:question_id]) || 
+    question = Question.find_by(id: params[:question_id]) ||
                quiz.questions.build(id: params[:question_id])
     @answer = question.answers.build
-    @answer.body = 'New Answer'
+    @answer.body = "New Answer"
     @answer.is_correct = false
     @answer.save
 
@@ -19,7 +18,7 @@ class AnswersController < ApplicationController
         answer.destroy
         rescue ActiveRecord::RecordNotFound
             answer = Answer.new(id: params[:id])
-        ensure 
+        ensure
             respond_to do |format|
                 format.turbo_stream { render turbo_stream: turbo_stream.remove(answer.id) }
         end
