@@ -19,44 +19,45 @@
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Quiz Results</h2>
       <span class="text-2xl font-bold text-blue-600">
-        <%= @attempt.submissions.count { |s| s.answer.is_correct? } %> / <%= @attempt.submissions.count %>
+        <%= @attempt.score %> / <%= @quiz.questions.count %>
       </span>
     </div>
   </div>
 
-  <div class="space-y-6">
-    <% @attempt.submissions.includes(:question, :answer).each do |submission| %>
-      <div class="border rounded-lg p-6 <%= submission.answer.is_correct? ? 'bg-green-50' : 'bg-red-50' %>">
-        <h3 class="font-semibold text-lg mb-3"><%= submission.question.title %></h3>
-        
-        <div class="space-y-2">
-          <% submission.question.answers.each do |answer| %>
-            <div class="flex items-center">
-              <div class="w-4 h-4 mr-3 flex-shrink-0">
-                <% if answer == submission.answer %>
-                  <% if answer.is_correct? %>
-                    <svg class="text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                  <% else %>
-                    <svg class="text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                  <% end %>
-                <% end %>
-              </div>
-              <span class="<%= answer.is_correct? ? 'font-semibold' : '' %>">
-                <%= answer.body %>
+<div class="space-y-6">
+  <% @quiz.questions.each do |question| %>
+    <% submissions = @attempt.submissions.select { |s| s.question_id == question.id } %>
+    <div class="border rounded-lg p-6 <%= submissions.any? && submissions.all? { |s| s.answer.is_correct? } ? 'bg-green-50' : submissions.any? ? 'bg-red-50' : 'bg-red-50' %>">
+      <h3 class="font-semibold text-lg mb-3"><%= question.title %></h3>
+      
+      <div class="space-y-2">
+        <% question.answers.each do |answer| %>
+          <div class="flex items-center">
+            <div class="w-4 h-4 mr-3 flex-shrink-0">
+              <% if submissions.any? && submissions.map(&:answer_id).include?(answer.id) %>
                 <% if answer.is_correct? %>
-                  <span class="text-sm text-green-600 ml-2">(Correct Answer)</span>
+                  <svg class="text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                <% else %>
+                  <svg class="text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  </svg>
                 <% end %>
-              </span>
+              <% end %>
             </div>
-          <% end %>
-        </div>
+            <span class="<%= answer.is_correct? ? 'font-semibold' : '' %>">
+              <%= answer.body %>
+              <% if answer.is_correct? %>
+                <span class="text-sm text-green-600 ml-2">(Correct Answer)</span>
+              <% end %>
+            </span>
+          </div>
+        <% end %>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
+</div>
 
   <div class="mt-8 flex space-x-4">
     <button onclick="copyToClipboard(window.location.href)" class="w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium">

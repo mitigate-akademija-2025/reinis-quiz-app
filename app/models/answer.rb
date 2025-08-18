@@ -4,5 +4,5 @@ class Answer < ApplicationRecord
   has_many :submissions
 
   validates :body, presence: true
-  validates :is_correct, inclusion: { in: [true, false] }
+  validates :is_correct, inclusion: { in: [ true, false ] }
 end

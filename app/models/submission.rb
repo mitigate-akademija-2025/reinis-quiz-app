@@ -11,7 +11,7 @@ class Submission < ApplicationRecord
 
   def answer_belongs_to_question
     return unless answer.present? && question.present?
-    
+
     unless answer.question_id == question_id
       errors.add(:answer, "must belong to the question being answered")
     end

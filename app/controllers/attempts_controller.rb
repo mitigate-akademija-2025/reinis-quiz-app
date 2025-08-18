@@ -1,9 +1,9 @@
 class AttemptsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_quiz
-  before_action :check_previous_attempt, only: [:new, :create]
-  before_action :check_quiz_has_questions, only: [:new, :create]
-  
+  before_action :check_previous_attempt, only: [ :new, :create ]
+  before_action :check_quiz_has_questions, only: [ :new, :create ]
+
   def new
     @attempt = @quiz.attempts.build(user: current_user)
     @questions = @quiz.questions.includes(:answers)
@@ -11,18 +11,21 @@ class AttemptsController < ApplicationController
 
   def create
     @attempt = @quiz.attempts.build(user: current_user)
-    
-    if params[:attempt] && params[:attempt][:submissions_attributes]
-      params[:attempt][:submissions_attributes].each do |_, submission_params|
+
+  if params[:attempt] && params[:attempt][:submissions_attributes]
+    params[:attempt][:submissions_attributes].each do |_,  submission_params|
+      answer_ids = Array(submission_params[:answer_id])
+      answer_ids.each do |answer_id|
         @attempt.submissions.build(
           question_id: submission_params[:question_id],
-          answer_id: submission_params[:answer_id]
+          answer_id: answer_id
         )
       end
     end
+  end
 
     if @attempt.save
-      redirect_to quiz_attempt_path(@quiz, @attempt), notice: 'Quiz completed successfully!'
+      redirect_to quiz_attempt_path(@quiz, @attempt), notice: "Quiz completed successfully!"
     else
       @questions = @quiz.questions.includes(:answers)
       render :new, status: :unprocessable_entity
@@ -41,14 +44,14 @@ class AttemptsController < ApplicationController
 
   def check_previous_attempt
     if @quiz.attempted_by?(current_user)
-      redirect_to quiz_attempt_path(@quiz, @quiz.last_attempt_for(current_user)), 
+      redirect_to quiz_attempt_path(@quiz, @quiz.last_attempt_for(current_user)),
                   alert: "You have already completed this quiz."
     end
   end
 
   def check_quiz_has_questions
     unless @quiz.questions.exists?
-      redirect_to quiz_path(@quiz), 
+      redirect_to quiz_path(@quiz),
                   alert: "This quiz cannot be attempted as it has no questions."
     end
   end
