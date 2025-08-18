@@ -19,21 +19,22 @@
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Quiz Results</h2>
       <span class="text-2xl font-bold text-blue-600">
-        <%= @attempt.submissions.count { |s| s.answer.is_correct? } %> / <%= @attempt.submissions.count %>
+        <%= @attempt.score %> / <%= @attempt.total_answers %>
       </span>
     </div>
   </div>
 
 <div class="space-y-6">
-  <% @attempt.submissions.group_by(&:question).each do |question, submissions| %>
-    <div class="border rounded-lg p-6 <%= submissions.all? { |s| s.answer.is_correct? } ? 'bg-green-50' : 'bg-red-50' %>">
+  <% @quiz.questions.each do |question| %>
+    <% submissions = @attempt.submissions.select { |s| s.question_id == question.id } %>
+    <div class="border rounded-lg p-6 <%= submissions.any? && submissions.all? { |s| s.answer.is_correct? } ? 'bg-green-50' : submissions.any? ? 'bg-red-50' : 'bg-red-50' %>">
       <h3 class="font-semibold text-lg mb-3"><%= question.title %></h3>
       
       <div class="space-y-2">
         <% question.answers.each do |answer| %>
           <div class="flex items-center">
             <div class="w-4 h-4 mr-3 flex-shrink-0">
-              <% if submissions.map(&:answer_id).include?(answer.id) %>
+              <% if submissions.any? && submissions.map(&:answer_id).include?(answer.id) %>
                 <% if answer.is_correct? %>
                   <svg class="text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
