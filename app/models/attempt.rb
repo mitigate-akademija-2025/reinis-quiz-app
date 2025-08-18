@@ -10,16 +10,17 @@ class Attempt < ApplicationRecord
   accepts_nested_attributes_for :submissions
 
   def score
-    submissions.count { |s| s.answer&.is_correct? }
-  end
+    total_score = 0
 
-  def total_answers
-    total_answers = 0
-    quiz.questions.each do |q|
-      q.answers.each do |a|
-        total_answers += 1 if a.is_correct?
-      end
+    quiz.questions.each do |question|
+      question_score = 0
+      submissions = self.submissions.select { |s| s.question_id == question.id }
+      question_score += submissions.count { |s| s.answer&.is_correct? }
+      question_score -= submissions.count { |s| !s.answer&.is_correct? }
+      question_score = [ question_score, 0 ].max
+      correct_answers_count = question.answers.count { |a| a.is_correct? }
+      total_score += (question_score.to_f / correct_answers_count) if correct_answers_count > 0
     end
-    total_answers
+    total_score.round(2)
   end
 end
